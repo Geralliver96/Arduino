@@ -6,8 +6,8 @@ int buttonPin = A1;
 
 bool isNormalCycle = true;
 unsigned long previousMillis = 0;
-int lightState = 0; // 0: Red, 1: Green, 2: Yellow
-int durations[3] = {5000, 5000, 2000}; // Red, Green, Yellow durations
+int lightState = 0; // 0: Rojo, 1: Verde, 2: Amarillo
+int durations[3] = {5000, 5000, 2000}; // Rojo, Verde, Amarillo duracion
 int currentDuration = 0;
 
 void setup() {
@@ -16,7 +16,7 @@ void setup() {
   pinMode(LEDv, OUTPUT);
   pinMode(buttonPin, INPUT_PULLUP);
   Serial.begin(9600);
-  updateTrafficLight(0); // Start with red light
+  updateTrafficLight(0); // Empieza con luz verde
 }
 
 void loop() {
@@ -25,21 +25,21 @@ void loop() {
   float LDR_val = (LDR_valor * 5.0) / 1023.0;
 
   if (buttonState == LOW) {
-    // Button pressed - switch to pedestrian mode
+    // Se presiona el botón y se activa el modo peatón
     pedestrianMode();
   } else if (isNormalCycle) {
-    // Normal traffic light cycle based on light conditions
+    // Luz de semáforo normal dependiente de la luz de ambiente
     if (millis() - previousMillis >= currentDuration) {
-      // Move to the next state in the cycle
+      // Cambio al siguiente estado del ciclo
       previousMillis = millis();
-      lightState = (lightState + 1) % 3; // Cycle through states
+      lightState = (lightState + 1) % 3; // Ciclo por los estados
       updateTrafficLight(lightState);
 
-      // Adjust durations based on light intensity
+      // Ajuste la duración en función de la intensidad de la luz
       if (LDR_val <= 2) {
-        durations[0] = 5000; // Red duration
-        durations[1] = 5000; // Green duration
-        durations[2] = 2000; // Yellow duration
+        durations[0] = 5000; // Duracion LED rojo
+        durations[1] = 5000; // Duracion LED verde
+        durations[2] = 2000; // Duracion LED amarillo
       } else {
         durations[0] = 2000;
         durations[1] = 2000;
@@ -51,29 +51,29 @@ void loop() {
 }
 
 void pedestrianMode() {
-  // Stop the normal cycle
+  // Parar modo normal
   isNormalCycle = false;
-  updateTrafficLight(0); // Set to red
-  delay(10000);          // 10 seconds for pedestrian crossing
+  updateTrafficLight(0); // Poner en rojo
+  delay(10000);          // 10 seg para cruce de peatones
   isNormalCycle = true;
   previousMillis = millis();
-  lightState = 0;        // Reset to red state
+  lightState = 0;        // Reset a estado rojo
   currentDuration = durations[0];
 }
 
 void updateTrafficLight(int state) {
   switch (state) {
-    case 0: // Red
+    case 0: // Estado rojo
       digitalWrite(LEDr, HIGH);
       digitalWrite(LEDa, LOW);
       digitalWrite(LEDv, LOW);
       break;
-    case 1: // Green
+    case 1: // Estado verde
       digitalWrite(LEDr, LOW);
       digitalWrite(LEDa, LOW);
       digitalWrite(LEDv, HIGH);
       break;
-    case 2: // Yellow
+    case 2: // Estado amarillo
       digitalWrite(LEDr, LOW);
       digitalWrite(LEDa, HIGH);
       digitalWrite(LEDv, LOW);
