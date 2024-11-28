@@ -15,16 +15,16 @@ void DCMotor::linkDriver(DCDriver* driver) {
 };
 
 
-void DCMotor::init() {
+int DCMotor::init() {
     if (!driver || !driver->initialized) {
         motor_status = FOCMotorStatus::motor_init_failed;
         SIMPLEFOC_DEBUG("MOT: Init not possible, driver not initialized");
-        return;
+        return 0;
     }
     if (!sensor) {
         motor_status = FOCMotorStatus::motor_init_failed;
         SIMPLEFOC_DEBUG("MOT: Init not possible, sensor not initialized");
-        return;
+        return 0;
     }
 
     motor_status = FOCMotorStatus::motor_initializing;
@@ -56,12 +56,13 @@ void DCMotor::init() {
     enable();
     _delay(50);
 
-    if (!_isset(sensor_direction)) {
+    if (sensor_direction==Direction::UNKNOWN) {
         sensor_direction = Direction::CW;
         SIMPLEFOC_DEBUG("MOT: Sensor Dir: CW");
     }
 
     motor_status = FOCMotorStatus::motor_ready;
+    return 1;
 };
 
 
